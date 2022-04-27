@@ -30,10 +30,6 @@ aside {
   padding-left: 20px;
 }
 
-aside h2 {
-  text-align: center;
-}
-
 h1 {
   font-family: "Raleway", sans-serif;
   text-transform: uppercase;
@@ -66,6 +62,10 @@ h3 {
 header h2 {
   display: inline;
 } */
+
+aside h2 {
+  text-align: center;
+}
 
 footer {
   padding: 20px;
