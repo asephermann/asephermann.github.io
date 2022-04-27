@@ -107,10 +107,19 @@ function submitLoan() {
   renderHistory();
 }
 
-function myFunction() {
+function openMenu() {
   var x = document.getElementById("links");
   if (x.className === "topnav") {
     x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+
+function closeMenu() {
+  var x = document.getElementById("links");
+  if (x.className === "topnav responsive") {
+    x.className = "topnav";
   } else {
     x.className = "topnav";
   }
