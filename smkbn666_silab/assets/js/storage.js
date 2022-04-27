@@ -60,17 +60,19 @@ function showHistory() {
     const history = JSON.parse(localStorage.getItem(CACHE_KEY)) || [];
     return history.filter((d) => {
       const time = new Date(
-        d.date_start.substring(0, 10) +
-          "T" +
-          d.date_start.substring(11, 19) +
-          ".000Z"
+        d.date_start.substring(0, 10) + "T" + d.date_start.substring(11, 19)
       );
       time.setHours(0, 0, 0, 0);
+
       const current_time = new Date();
       current_time.setHours(0, 0, 0, 0);
 
+      console.log(time);
+      console.log(current_time);
+
       return current_time.getTime() == time.getTime();
     });
+    // return history;
   } else {
     return [];
   }

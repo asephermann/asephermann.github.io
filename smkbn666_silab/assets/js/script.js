@@ -26,6 +26,9 @@ function resetForm() {
 }
 
 function setFormValue() {
+  document.querySelector("#currentDate").innerHTML =
+    "(Tanggal: " + getCurrentDate() + ")";
+
   loan.name = document.querySelector("#name").value;
   let groupSelect = document.querySelector("#group");
   loan.group = groupSelect.options[groupSelect.selectedIndex].text;
@@ -103,9 +106,6 @@ function submitLoan() {
   resetForm();
   renderHistory();
 }
-
-document.querySelector("#currentDate").innerHTML =
-  "(Tanggal: " + getCurrentDate() + ")";
 
 function myFunction() {
   var x = document.getElementById("links");
