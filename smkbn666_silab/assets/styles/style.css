@@ -30,6 +30,10 @@ aside {
   padding-left: 20px;
 }
 
+aside h2 {
+  text-align: center;
+}
+
 h1 {
   font-family: "Raleway", sans-serif;
   text-transform: uppercase;
@@ -43,9 +47,6 @@ h3 {
   text-transform: uppercase;
 }
 
-aside h2 {
-  text-align: center;
-}
 .featured-image {
   width: 100%;
   max-height: 300px;
@@ -61,10 +62,10 @@ aside h2 {
   width: 200px;
 }
 
-header,
+/* header,
 header h2 {
   display: inline;
-}
+} */
 
 footer {
   padding: 20px;
