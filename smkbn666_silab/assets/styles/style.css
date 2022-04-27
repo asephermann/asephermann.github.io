@@ -1,0 +1,246 @@
+@import url("https://fonts.googleapis.com/css2?family=Oxygen&family=Raleway:wght@400;700&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Oxygen", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 20px;
+  overflow: auto;
+}
+
+main article {
+  text-align: justify;
+}
+
+#content {
+  float: left;
+  width: 75%;
+}
+
+aside {
+  float: right;
+  width: 25%;
+  padding-left: 20px;
+}
+
+aside h2 {
+  text-align: center;
+}
+
+h1 {
+  font-family: "Raleway", sans-serif;
+  text-transform: uppercase;
+}
+
+h2,
+h3 {
+  font-family: "Raleway", sans-serif;
+  color: #003e7d;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.featured-image {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+}
+
+.emblem-image {
+  float: left;
+  width: 200px;
+}
+
+.profile img {
+  width: 200px;
+}
+
+header,
+header h2 {
+  display: inline;
+}
+
+footer {
+  padding: 20px;
+  background-color: #001d3a;
+  color: white;
+  text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+  header h1 {
+    font-size: 20px;
+  }
+  header p {
+    font-size: 12px;
+  }
+
+  .emblem-image {
+    float: none;
+    width: 200px;
+  }
+
+  .offset::before {
+    display: block;
+    content: " ";
+    height: 220px;
+    margin-top: -120px;
+    visibility: hidden;
+  }
+}
+
+@media screen and (max-width: 1320px) {
+  #content,
+  aside {
+    width: 100%;
+    padding: 0;
+  }
+}
+
+nav {
+  display: flex;
+  background-color: #001d3a;
+  overflow: hidden;
+  position: sticky;
+  top: 0;
+}
+
+nav h2 {
+  text-align: center;
+  background-color: #edf2f9;
+  padding: 20px;
+  margin: 0;
+}
+
+nav a {
+  font-family: "Raleway", sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  text-decoration: none;
+  color: #f2f2f2;
+  height: 100%;
+  display: inline-block;
+  text-align: center;
+  padding: 24px;
+  margin: 0;
+  height: 100%;
+}
+
+nav a:not(.icon):hover {
+  background-color: #edf2f9;
+  color: #003e7d;
+  font-weight: bold;
+}
+
+nav .icon {
+  font-size: 32px;
+  font-weight: 400;
+  display: none;
+}
+
+@media screen and (max-width: 600px) {
+  nav h2 {
+    width: 100%;
+    display: block;
+  }
+  nav ul:not(:first-child) {
+    display: none;
+  }
+  nav a.icon {
+    float: right;
+    display: block;
+  }
+}
+nav ul {
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+  list-style-type: none;
+}
+@media screen and (max-width: 600px) {
+  nav {
+    display: flex;
+    position: sticky;
+    top: 0;
+  }
+  nav h2 {
+    flex-grow: 11;
+  }
+  nav a {
+    flex-grow: 1;
+  }
+  nav ul {
+    flex-grow: 12;
+  }
+  nav.topnav.responsive .icon {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  nav a {
+    text-align: left;
+  }
+  nav.topnav.responsive ul {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+  }
+  nav.topnav.responsive ul li {
+    width: 100%;
+  }
+}
+
+.profile header {
+  text-align: center;
+}
+
+.profile img {
+  border-radius: 50%;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.offset::before {
+  display: block;
+  content: " ";
+  height: 150px;
+  margin-top: -150px;
+  visibility: hidden;
+}
+
+.jumbotron {
+  font-size: 20px;
+  padding: 60px;
+  background-color: #003e7d;
+  text-align: center;
+  color: white;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  text-align: right;
+}

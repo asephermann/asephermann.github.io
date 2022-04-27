@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Laboratorium Komputer (SILAB) | SMK BN 666</title>
+    <link rel="stylesheet" href="assets/styles/style.css">
+    <link rel="stylesheet" href="assets/styles/form-style.css">
+    <link rel="stylesheet" href="assets/styles/history-style.css">
+</head>
+
+<body onload="setFormValue()">
+    <header>
+        <div class="jumbotron">
+            <img src="assets/image/logo-bn666.png" class="emblem-image" alt="Logo SMK BN 666">
+            <h1>LABORATORIUM KOMPUTER SMK BN 666</h1>
+            <p> Jl. Percobaan No.65, Kec. Cileunyi, Kabupaten Bandung</p>
+        </div>
+        <!-- <nav class="topnav" id="links">
+            <h2>LAB-02</h2>
+            <ul>
+                <li><a href="#about">Tentang Lab</a></li>
+                <li><a href="#form">Form Peminjaman Laptop</a></li>
+                <li><a href="#history">Riwayat Peminjaman Laptop</a></li>
+            </ul>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                =
+            </a>
+        </nav> -->
+        <nav class="topnav" id="links">
+            <h2>LAB-02</h2>
+            <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+                =
+            </a>
+            <ul>
+                <li><a href="#about">Tentang Lab</a></li>
+                <li><a href="#form">Form Peminjaman Laptop</a></li>
+                <li><a href="#history">Riwayat Peminjaman Laptop</a></li>
+            </ul>
+            <!-- <a href="#about">Tentang Lab</a>
+            <a href="#form">Form Peminjaman Laptop</a>
+            <a href="#history">Riwayat Peminjaman Laptop</a> -->
+        </nav>
+
+    </header>
+    <main style="clear: both;">
+        <div id="content">
+            <article class="card">
+                <h2 id="about" class="offset">Tentang Lab</h2>
+                <img src="assets/image/lab02.jpg" class="featured-image" alt="Laboratorium Komputer-02">
+                <p>SMK BN 666 memiliki laboratorium komputer untuk menunjang kegiatan belajar mengajar
+                    siswa. Laboratorium "Lab-02" ini dilengkapi dengan 20 buah komputer desktop dan 20 laptop. Siswa
+                    bisa menggunakan fasilitas komputer maupun laptop tersebut untuk kegiatan praktikum siswa maupun
+                    yang lainnya. Komputer desktop sudah dilengkapi dengan berbagai software pemrograman seperti: Visual
+                    Studio Code, XAMPP, Androd Studio, Netbeans, dan lain-lain </p>
+                <p>Siswa RPL bisa menggunakan software Visual Studio Code tersebut untuk belajar pemrograman web. Lab
+                    komputer ini berada di lantai 1, bersebelahan dengan "Lab-01". Komputer-komputer tersebut sudah
+                    terhubung ke internet. Siswa dan guru bisa memanfaatkan fasilitas komputer yang ada di laboratorium
+                    komputer ini untuk mengerjakan tugas maupun yang lainnya. Di laboratorium komputer ini juga
+                    dilengkapi dengan proyektor untuk memudahkan guru ketika mengajar siswa.</p>
+            </article>
+            <article id="loan" class="card">
+                <h2>Peminjaman Laptop</h2>
+                <section>
+                    <h3 id="form" class="offset">Form Peminjaman Laptop</h3>
+                    <!-- Form Peminjaman Laptop -->
+                    <form>
+                        <ul class="flex-outer">
+                            <li>
+                                <label for="name">Nama Peminjam</label>
+                                <input type="text" id="name" placeholder="Masukkan Nama Peminjam"
+                                    oninput="setFormValue()" required>
+                            </li>
+                            <li>
+                                <label for="group">Kelas/Umum</label>
+                                <select name="group" id="group" oninput="setFormValue()" required>
+                                    <option value="umum">Umum</option>
+                                    <optgroup label="Kelas X">
+                                        <option value="xrpl1">X RPL 1</option>
+                                        <option value="xrpl2">X RPL 2</option>
+                                        <option value="xrpl3">X RPL 3</option>
+                                        <option value="xrpl4">X RPL 4</option>
+                                    </optgroup>
+                                    <optgroup label="Kelas XI">
+                                        <option value="xirpl1">XI RPL 1</option>
+                                        <option value="xirpl2">XI RPL 2</option>
+                                        <option value="xirpl3">XI RPL 3</option>
+                                        <option value="xirpl4">XI RPL 4</option>
+                                    </optgroup>
+                                    <optgroup label="Kelas XII">
+                                        <option value="xiirpl1">XII RPL 1</option>
+                                        <option value="xiirpl2">XII RPL 2</option>
+                                        <option value="xiirpl3">XII RPL 3</option>
+                                        <option value="xiirpl4">XII RPL 4</option>
+                                    </optgroup>
+                                </select>
+                            </li>
+                            <li>
+                                <label for="phone">No. Telp/WA</label>
+                                <input type="text" id="phone" name="phone"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\..*)\./g, '$1');setFormValue();"
+                                    placeholder="Masukkan No. Telp/WhatsApp" maxlength="15" required>
+                            </li>
+                            <li>
+                                <p>No. Laptop</p>
+                                <ul class="flex-inner">
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop01" value="01"><span>01</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop02" value="02"><span>02</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop03" value="03"><span>03</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop04" value="04"><span>04</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop05" value="05"><span>05</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop06" value="06"><span>06</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop07" value="07"><span>07</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop08" value="08"><span>08</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop09" value="09"><span>09</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop10" value="10"><span>10</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop11" value="11"><span>11</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop12" value="12"><span>12</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop13" value="13"><span>13</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop14" value="14"><span>14</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop15" value="15"><span>15</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop16" value="16"><span>16</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop17" value="17"><span>17</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop18" value="18"><span>18</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop19" value="19"><span>19</span>
+                                        </label>
+                                    </li>
+                                    <li>
+                                        <label>
+                                            <input type="checkbox" id="laptop20" value="20"><span>20</span>
+                                        </label>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><button type="button" onclick="submitLoan()" id="buttonPinjam">Pinjam</button>
+                            </li>
+                        </ul>
+                    </form>
+                </section>
+                <section>
+                    <div class="history">
+                        <h3 id="history" class="offset">Riwayat Peminjaman Laptop <span id="currentDate"></span>
+                        </h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Waktu</th>
+                                    <th>Peminjam</th>
+                                    <th>Nomor Unit</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyList"></tbody>
+                        </table>
+                    </div>
+                </section>
+            </article>
+        </div>
+        <aside>
+            <article class="profile card">
+                <header>
+                    <h2>Laboran</h2>
+                    <p>LAB-02</p>
+                    <figure>
+                        <img src="assets/image/profile.jpg" alt="Foto Profil">
+                        <figcaption>Asep Herman Nursalam</figcaption>
+                    </figure>
+                </header>
+                <section>
+                    <h3 style="text-align: center;">Informasi Kontak</h3>
+                    <table>
+                        <tr>
+                            <th>Email</th>
+                            <td>a**hn***@gmail.com</td>
+                        </tr>
+                        <tr>
+                            <th>HP/WA</th>
+                            <td>+62 857 9533 1***</td>
+                        </tr>
+                    </table>
+                </section>
+            </article>
+        </aside>
+    </main>
+    <footer>SILAB @ 2022, Asep Herman Nursalam</footer>
+    <script src="assets/js/storage.js"></script>
+    <script src="assets/js/script.js"></script>
+</body>
+
+</html>
