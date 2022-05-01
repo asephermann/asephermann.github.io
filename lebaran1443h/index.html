@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebaran 1443 H | Asep Hermann</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+        body {
+            font-family: "Roboto", Arial, Helvetica, sans-serif;
+            background-color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            color: white;
+        }
+
+        img {
+            width: 100%;
+        }
+
+        figcaption {
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body onload="display_random_image();">
+
+
+    <script>
+        function display_random_image() {
+            var theImages = [{
+                src: "img/1.jpeg",
+                alt: "minal 'aidin wal faidzin, maaf bila ada salah bicara, salah kata, ataupun salah menaruh rasa. 🙏🏼"
+            }, {
+                src: "img/2.jpeg",
+                alt: "mohon maaf lahir dan batin untuk semua kesalahan yang disengaja maupun yang sudah direncanakan matang-matang <3"
+            }, {
+                src: "img/3.jpeg",
+                alt: "mohon maaf kalo ada salah, baik yang disengaja maupun yg sangat disengaja"
+            }];
+
+            var preBuffer = [];
+            for (var i = 0, j = theImages.length; i < j; i++) {
+                preBuffer[i] = new Image();
+                preBuffer[i].src = theImages[i].src;
+                preBuffer[i].alt = theImages[i].alt;
+            }
+
+            // create random image number
+            function getRandomInt(min, max) {
+                //  return Math.floor(Math.random() * (max - min + 1)) + min;
+
+                imn = Math.floor(Math.random() * (max - min + 1)) + min;
+                return preBuffer[imn];
+            }
+
+            // 0 is first image,   preBuffer.length - 1) is  last image
+
+            var newImage = getRandomInt(0, preBuffer.length - 1);
+
+            // remove the previous images
+            var images = document.getElementsByTagName('img');
+            var l = images.length;
+            for (var p = 0; p < l; p++) {
+                images[0].parentNode.removeChild(images[0]);
+            }
+            // display the image  
+            var figure = document.createElement("figure"); // <figure></figure>
+            figure.appendChild(newImage);
+            var figcaption = document.createElement("figcaption"); // <figcaption></figcaption>
+            var text = document.createTextNode(newImage.alt);
+            figcaption.appendChild(text);
+            figure.appendChild(figcaption);
+
+            document.body.appendChild(figure);
+        }
+    </script>
+</body>
+
+</html>
