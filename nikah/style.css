@@ -23,6 +23,13 @@ body {
     padding: 20px;
     max-width: 1200px;
     margin: auto;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    animation: fadeIn 1000ms ease;
+    -webkit-animation: fadeIn 1000ms ease;
 }
 
 .main-content {
