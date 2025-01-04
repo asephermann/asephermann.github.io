@@ -57,12 +57,10 @@ body {
     text-align: center;
 }
 
-img.corner-logo {
+corner-logo {
     position: fixed;
     bottom: 0px;
     left: 0px;
-    width: 150px;
-    height: 150px;
     z-index: 100;
 }
 
