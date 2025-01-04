@@ -53,7 +53,7 @@ body {
 }
 
 .video-wrapper {
-    flex: 0 0 320px;
+    flex: 0 0 100px;
     text-align: center;
 }
 
