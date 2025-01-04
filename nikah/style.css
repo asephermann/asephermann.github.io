@@ -1,6 +1,5 @@
 body {
   background: #00091B;
-  font-family: 'Poppins', sans-serif;
   color: #fff;
 }
 
@@ -57,7 +56,8 @@ body {
     text-align: center;
 }
 
-corner-logo {
+.corner-logo {
+    font-family: 'Muli', sans-serif;
     position: fixed;
     bottom: 0px;
     left: 0px;
