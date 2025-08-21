@@ -122,6 +122,9 @@
         <button onclick="openLiveTV()">
             <i class="fas fa-tv"></i> Live TV News
         </button>
+        <button onclick="openPrayerTimes()">
+            <i class="fa-solid fa-mosque"></i> Prayer Times
+        </button>
         <button onclick="openWeatherInfo()">
             <i class="fas fa-cloud-sun"></i> Weather Info
         </button>
@@ -248,6 +251,20 @@
                 // For desktop, open the URL in a new tab
                 window.open(youtubeUrl, '_blank');
             }
+        }
+
+        function openPrayerTimes() {
+            // Show custom alert
+            showAlert('Opening Prayer Times Information...');
+
+            // Close the modal (assuming this function exists)
+            closeTVModal();
+
+            // Define the URL for Salah.com
+            const salahUrl = 'https://salah.com/';
+
+            // Open the URL in a new tab
+            window.open(salahUrl, '_blank');
         }
 
         function openWeatherInfo() {
@@ -394,3 +411,4 @@
 </body>
 
 </html>
+
