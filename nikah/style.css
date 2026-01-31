@@ -64,6 +64,12 @@ body {
     z-index: 100;
 }
 
+@media (max-width: 768px) {
+    .corner-logo img {
+        width: 80px;
+    }
+}
+
 h1 {
   font-size: 50px;
   font-family: 'Poppins', sans-serif;
@@ -112,3 +118,4 @@ p {
   text-decoration: none;
   
 }
+
