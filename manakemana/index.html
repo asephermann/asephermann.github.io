@@ -101,7 +101,7 @@
             <div class="panel-header">
                 <h2>Ayo Kita Ke Mana?</h2>
                 <h6>Asep Hermann @ 2026</h6>
-                <button class="toggle-btn" id="btn-toggle-search" onclick="togglePanel('search-body', 'btn-toggle-search')" title="Buka/Tutup Form">&#9660;</button> </div>
+                <button class="toggle-btn" id="btn-toggle-search" onclick="togglePanel('search-body', 'btn-toggle-search')" title="Buka/Tutup Form">▼</button> </div>
             <div id="search-body">
                 <p style="font-size: 13px; color: #777; margin-top: 0;">Geser pin biru di peta untuk <strong>tetapkan</strong> titik awal keberangkatanmu.</p>
                 <div id="location-status">Mendeteksi lokasi saat ini...</div>
@@ -137,7 +137,7 @@
         <div id="results-container">
             <div class="panel-header">
                 <h3>Hasil Pencarian</h3>
-                <button class="toggle-btn" id="btn-toggle-results" onclick="togglePanel('results-area', 'btn-toggle-results')" title="Buka/Tutup Hasil">&#9660;</button> </div>
+                <button class="toggle-btn" id="btn-toggle-results" onclick="togglePanel('results-area', 'btn-toggle-results')" title="Buka/Tutup Hasil">▼</button> </div>
             <div id="results-area"></div>
         </div>
     </div>
@@ -201,10 +201,10 @@
         
         if (body.style.display === 'none') {
             body.style.display = 'block';
-            btn.innerHTML = '&#9660;'; // Ikon ▼
+            btn.innerHTML = '▼'; // Ikon ▼
         } else {
             body.style.display = 'none';
-            btn.innerHTML = '&#9650;'; // Ikon ▲
+            btn.innerHTML = '▲'; // Ikon ▲
         }
     }
 
@@ -272,12 +272,12 @@
         
         // 2. Pastikan area Hasil (di dalamnya) dalam kondisi terbuka (tidak tersembunyi)
         document.getElementById('results-area').style.display = 'block';
-        document.getElementById('btn-toggle-results').innerHTML = '&#9660;';
+        document.getElementById('btn-toggle-results').innerHTML = '▼';
         
         // 3. (Opsional/Mobile UX) Jika di layar HP, otomatis tutup panel pencarian agar tidak menghalangi peta
         if (window.innerWidth <= 768) {
             document.getElementById('search-body').style.display = 'none';
-            document.getElementById('btn-toggle-search').innerHTML = '&#9650;';
+            document.getElementById('btn-toggle-search').innerHTML = '▲';
         }
         
         document.getElementById('results-area').innerHTML = '<div class="result-card"><p style="color:#666; margin:0;">Sedang memproses peta dan data gambar...</p></div>';
@@ -323,15 +323,20 @@
         }
         resultsArea.innerHTML = '';
 
-        let startLat = startMarker.getLatLng().lat;
-        let startLng = startMarker.getLatLng().lng;
+        let startLatLng = startMarker.getLatLng();
+        let startLat = startLatLng.lat;
+        let startLng = startLatLng.lng;
 
         elements.forEach((el, index) => {
             let name = el.tags && el.tags.name ? el.tags.name : `Destinasi Terbuka #${index + 1}`;
             L.marker([el.lat, el.lon]).addTo(resultMarkers).bindPopup(`<b>${name}</b>`);
 
+            // Menghitung Jarak Geodesik Asli Antara Titik Berangkat dan Objek Tujuan
+            let destLatLng = L.latLng(el.lat, el.lon);
+            let jarakMeter = startLatLng.distanceTo(destLatLng);
+            let jarakTeks = jarakMeter >= 1000 ? (jarakMeter / 1000).toFixed(2) + ' km' : Math.round(jarakMeter) + ' m';
+
             let rekomendasiKegiatan = "", rekomendasiCommuting = "";
-            let radiusInput = parseInt(document.getElementById('radius').value);
 
             let targetType = type;
             if (type === 'any' && el.tags) {
@@ -346,13 +351,16 @@
             else if (targetType === 'building') rekomendasiKegiatan = "Eksplorasi tata ruang arsitektur, menikmati kuliner lokal, atau mempelajari sejarah gedung.";
             else rekomendasiKegiatan = "Eksplorasi area sekitar tempat baru atau bersantai rileks.";
 
-            if (radiusInput <= 2000) rekomendasiCommuting = "Sangat dekat dari titik awal. Disarankan berjalan kaki atau sepeda kayuh.";
-            else if (radiusInput <= 8000) rekomendasiCommuting = "Jarak sedang. Gunakan motor atau bersepeda (gowes jarak menengah) demi efisiensi waktu.";
+            // Rekomendasi transportasi disesuaikan dengan JARAK ASLI, bukan radius input maksimal
+            if (jarakMeter <= 2000) rekomendasiCommuting = "Sangat dekat dari titik awal. Disarankan berjalan kaki atau sepeda kayuh.";
+            else if (jarakMeter <= 8000) rekomendasiCommuting = "Jarak sedang. Gunakan motor atau bersepeda (gowes jarak menengah) demi efisiensi waktu.";
             else rekomendasiCommuting = "Jarak cukup jauh. Pertimbangkan berpindah moda secara estafet (ngeteng) angkutan umum atau kendaraan bermotor.";
 
+            // Perbaikan URL Google Maps ke format navigasi rute standar yang valid
             let gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${el.lat},${el.lon}`;
 
             let imgContainerId = `img-container-${el.id}`;
+            let wilayahId = `wilayah-${el.id}`;
             let card = document.createElement('div');
             card.className = 'result-card';
             
@@ -362,7 +370,8 @@
                     <span>${name}</span>
                     <span class="result-title-icon">↗</span>
                 </a>
-                <div class="result-desc"><strong>Radius Pencarian:</strong> ${radiusInput}m</div>
+                <div class="result-desc"><strong>Estimasi Jarak:</strong> ${jarakTeks}</div>
+                <div class="result-desc"><strong>Wilayah:</strong> <span id="${wilayahId}" style="color: #777; font-style: italic;">Memuat wilayah...</span></div>
                 <div class="result-desc"><strong>Kegiatan:</strong> ${rekomendasiKegiatan}</div>
                 <div class="result-desc"><strong>Transportasi:</strong> ${rekomendasiCommuting}</div>
             `;
@@ -379,6 +388,51 @@
                 });
             }
         });
+
+        // Proses pengambilan data kecamatan & kota secara asinkron (Staggered Fetch demi mematuhi aturan limit Nominatim)
+        (async () => {
+            for (let el of elements) {
+                let wilayahSpan = document.getElementById(`wilayah-${el.id}`);
+                if (!wilayahSpan) continue;
+
+                // Cek optimasi awal apabila tag alamat bawaan OpenStreetMap kebetulan sudah terisi
+                if (el.tags && (el.tags["addr:subdistrict"] || el.tags["addr:district"] || el.tags["addr:city"])) {
+                    let kec = el.tags["addr:subdistrict"] || el.tags["addr:district"] || "";
+                    let kot = el.tags["addr:city"] || "";
+                    if (kec && kot) {
+                        wilayahSpan.innerText = `${kec}, ${kot}`;
+                        wilayahSpan.style.color = "#555";
+                        wilayahSpan.style.fontStyle = "normal";
+                        continue;
+                    }
+                }
+
+                // Jika tag OSM kosong, tarik dari API Reverse Geocoding Nominatim secara bergilir (delay 300ms)
+                await new Promise(resolve => setTimeout(resolve, 300));
+                try {
+                    let res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${el.lat}&lon=${el.lon}&zoom=14&addressdetails=1`, {
+                        headers: { 'User-Agent': 'ManaKeManaApp/1.0' }
+                    });
+                    let data = await res.json();
+                    if (data && data.address) {
+                        let kecamatan = data.address.suburb || data.address.district || data.address.subdistrict || data.address.village || data.address.town || '';
+                        let kota = data.address.city || data.address.regency || data.address.county || '';
+                        
+                        let lokasiTeks = [];
+                        if (kecamatan) lokasiTeks.push(kecamatan);
+                        if (kota) lokasiTeks.push(kota);
+                        
+                        wilayahSpan.innerText = lokasiTeks.length > 0 ? lokasiTeks.join(', ') : 'Tidak diketahui';
+                    } else {
+                        wilayahSpan.innerText = 'Tidak diketahui';
+                    }
+                } catch (error) {
+                    wilayahSpan.innerText = 'Gagal memuat';
+                }
+                wilayahSpan.style.color = "#555";
+                wilayahSpan.style.fontStyle = "normal";
+            }
+        })();
 
         let bounds = L.featureGroup([startMarker, ...resultMarkers.getLayers()]).getBounds();
         map.fitBounds(bounds, {padding: [40, 40]});
