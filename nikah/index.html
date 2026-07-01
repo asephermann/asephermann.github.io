@@ -8,9 +8,10 @@
 </head>
 <body>
     <div class="corner-logo">
-        <img src="../1bead1f8ab169a0c3de195bf36cbeb0677b74407.png" style="margin-bottom: -5px;" width="250" height="250" alt="Logo">
+        <img id="random-logo" src="../1bead1f8ab169a0c3de195bf36cbeb0677b74407.png" style="margin-bottom: -5px;" width="250" height="250" alt="Logo">
         <span>(28) Bandung Regency | South Tangerang City, 🇮🇩</span>
     </div>
+    
     <div class="wrapper">
         <div class="main-content">
             <h1 style="text-align: center">belum ada calonnya<span class="dot">.</span></h1>
@@ -23,6 +24,7 @@
                 <a href="https://www.linkedin.com/in/asephermann" target="_blank"><i class="fa-brands fa-linkedin"></i></a>
             </div>
         </div>
+        
         <div class="video-wrapper">
             <video width="99" height="176" controls>
                 <source src="../bb473b244281a9accc6df975800bbeca4fb64b38.mp4" type="video/mp4">
@@ -30,7 +32,20 @@
             </video>
         </div>
     </div>
+
+    <script>
+        // 1. Buat daftar (array) berisi nama-nama file gambar Anda
+        // (Pastikan path folder-nya sesuai, di sini saya menggunakan awalan '../' seperti kode asli Anda)
+        const logoImages = [
+            "../a956xya956xya956.png",
+            "../1bead1f8ab169a0c3de195bf36cbeb0677b74407.png",
+            "../U2FsdGVkX1bwBrhpCaeWDeNX8tRjGbRbiSK2L2qceCKcs1l5ZG35w.png"
+        ];
+
+        // 2. Pilih indeks acak berdasarkan jumlah gambar di dalam array
+        const randomIndex = Math.floor(Math.random() * logoImages.length);
+
+        // 3. Ubah sumber (src) dari elemen gambar dengan gambar yang terpilih
+        document.getElementById('random-logo').src = logoImages[randomIndex];
+    </script>
 </body>
-
-
-
