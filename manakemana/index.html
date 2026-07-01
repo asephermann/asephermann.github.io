@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mana Ke Mana</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
+        #app-container { display: flex; height: 100vh; flex-direction: row; position: relative; }
+        
+        /* ==== DESKTOP LAYOUT ==== */
+        #sidebar { 
+            width: 30%; height: 100%; background: #f8f9fa; 
+            display: flex; flex-direction: column; 
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1); z-index: 2; 
+        }
+        
+        #search-controls { flex-shrink: 0; border-bottom: 1px solid #ddd; }
+        #search-body { padding: 0 20px 20px 20px; overflow-y: auto; max-height: 50vh; }
+        
+        #results-container { display: none; flex-grow: 1; flex-direction: column; overflow: hidden; }
+        #results-area { padding: 0 20px 20px 20px; overflow-y: auto; flex-grow: 1; }
+        
+        /* Peta di Kanan */
+        #map-container { width: 70%; height: 100%; z-index: 1; }
+        
+        /* ==== ELEMEN UMUM ==== */
+        .panel-header { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; }
+        .panel-header h2, .panel-header h3 { margin: 0; color: #333; font-size: 18px; }
+        
+        .toggle-btn { background: transparent; border: none; font-size: 18px; cursor: pointer; color: #555; font-weight: bold; padding: 5px; }
+        .toggle-btn:hover { color: #007bff; }
+        
+        .form-group { margin-bottom: 12px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 13px; color: #555; }
+        input[type="number"], select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        
+        .checkbox-group { display: flex; align-items: center; margin-bottom: 12px; }
+        .checkbox-group input { margin-right: 8px; width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-group label { margin-bottom: 0; cursor: pointer; font-size: 14px; }
+
+        .btn-container { display: flex; gap: 10px; margin-top: 15px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; transition: background 0.2s; font-size: 14px; }
+        .btn-search { background-color: #007bff; }
+        .btn-search:hover { background-color: #0056b3; }
+        .btn-random { background-color: #28a745; }
+        .btn-random:hover { background-color: #218838; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+        
+        .result-card { background: white; padding: 15px; margin-bottom: 12px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 5px;}
+        .result-title { font-weight: bold; color: #007bff; font-size: 16px; margin-bottom: 2px; text-decoration: none; display: flex; justify-content: space-between; align-items: center; }
+        .result-title:hover { text-decoration: underline; color: #0056b3; }
+        .result-title-icon { font-size: 12px; color: #666; }
+        .result-desc { font-size: 13px; color: #555; }
+        
+        .result-img-container { width: 100%; min-height: 0; }
+        .result-img { width: 100%; height: 160px; object-fit: cover; border-radius: 5px; margin-bottom: 8px; background-color: #eee; }
+        #location-status { font-size: 12px; color: #007bff; margin-bottom: 15px; font-style: italic; }
+
+        /* ==== RESPONSIVE MOBILE LAYOUT ==== */
+        @media (max-width: 768px) {
+            #app-container { display: block; }
+            #map-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+            
+            #sidebar { 
+                position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; 
+                background: transparent; box-shadow: none; 
+                display: flex; flex-direction: column; justify-content: space-between; 
+                z-index: 2; pointer-events: none; 
+            }
+            
+            #search-controls { 
+                background: rgba(255, 255, 255, 0.95); 
+                pointer-events: auto; 
+                border-bottom-left-radius: 15px; border-bottom-right-radius: 15px;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                border-bottom: none;
+            }
+            #search-body { max-height: 50vh; }
+            
+            #results-container { 
+                background: rgba(255, 255, 255, 0.95); 
+                pointer-events: auto; 
+                border-top-left-radius: 15px; border-top-right-radius: 15px;
+                box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+                flex-grow: 0; /* Agar tidak mengambil seluruh tinggi di mobile */
+            }
+            #results-area { max-height: 45vh; }
+            
+            .leaflet-top.leaflet-left { top: 60vh; } /* Menggeser tombol zoom Leaflet */
+            .panel-header h2, .panel-header h3 { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="sidebar">
+        <div id="search-controls">
+            <div class="panel-header">
+                <h2>Ayo Kita Ke Mana?</h2>
+                <h6>Asep Hermann @ 2026</h6>
+                <button class="toggle-btn" id="btn-toggle-search" onclick="togglePanel('search-body', 'btn-toggle-search')" title="Buka/Tutup Form">&#9660;</button> </div>
+            <div id="search-body">
+                <p style="font-size: 13px; color: #777; margin-top: 0;">Geser pin biru di peta untuk <strong>tetapkan</strong> titik awal keberangkatanmu.</p>
+                <div id="location-status">Mendeteksi lokasi saat ini...</div>
+                
+                <div class="form-group">
+                    <label for="radius">Radius Pencarian (meter)</label>
+                    <input type="number" id="radius" value="5000" min="500" max="20000" step="500">
+                </div>
+                
+                <div class="form-group">
+                    <label for="dest-type">Tipe Tujuan</label>
+                    <select id="dest-type">
+                        <option value="any">Apa Saja (Semua Tipe)</option>
+                        <option value="park">Taman / Ruang Terbuka Hijau</option>
+                        <option value="water">Air / Danau / Sungai</option>
+                        <option value="forest">Hutan / Alam</option>
+                        <option value="building">Gedung / Pusat Belanja / Museum</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="lock-start">
+                    <label for="lock-start">Kunci Titik Berangkat</label>
+                </div>
+                
+                <div class="btn-container">
+                    <button class="btn-search" onclick="cariTujuan()">Cari Tujuan</button>
+                    <button class="btn-random" onclick="acakPilihan()">Acak Pilihan</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results-container">
+            <div class="panel-header">
+                <h3>Hasil Pencarian</h3>
+                <button class="toggle-btn" id="btn-toggle-results" onclick="togglePanel('results-area', 'btn-toggle-results')" title="Buka/Tutup Hasil">&#9660;</button> </div>
+            <div id="results-area"></div>
+        </div>
+    </div>
+
+    <div id="map-container"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    let defaultLat = -6.1754;
+    let defaultLng = 106.8272;
+    
+    let map = L.map('map-container').setView([defaultLat, defaultLng], 14);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors',
+        maxZoom: 19
+    }).addTo(map);
+
+    let startMarker = L.marker([defaultLat, defaultLng], {draggable: true}).addTo(map)
+        .bindPopup('<b>Titik Berangkat</b><br>Geser untuk <b>tetapkan</b> lokasi manual.').openPopup();
+    
+    let radiusCircle = L.circle([defaultLat, defaultLng], {
+        color: '#007bff', fillColor: '#007bff', fillOpacity: 0.1, radius: 5000
+    }).addTo(map);
+
+    let locationStatus = document.getElementById('location-status');
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(position) {
+                let userLatLng = new L.LatLng(position.coords.latitude, position.coords.longitude);
+                map.setView(userLatLng, 14);
+                startMarker.setLatLng(userLatLng);
+                radiusCircle.setLatLng(userLatLng);
+                startMarker.bindPopup('<b>Lokasi Kamu Saat Ini</b><br>Geser untuk <b>tetapkan</b> lokasi manual.').openPopup();
+                
+                locationStatus.style.color = "#28a745";
+                locationStatus.innerText = "Lokasi berhasil ditemukan.";
+                setTimeout(() => locationStatus.style.display = 'none', 3000);
+            },
+            function(error) {
+                locationStatus.style.color = "#dc3545";
+                locationStatus.innerText = "Akses lokasi ditolak/gagal. Menggunakan titik Monas.";
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+    } else {
+        locationStatus.style.color = "#dc3545";
+        locationStatus.innerText = "Browser ini tidak mendukung Geolocation.";
+    }
+
+    startMarker.on('dragend', function(e) { radiusCircle.setLatLng(e.target.getLatLng()); });
+    document.getElementById('radius').addEventListener('input', function(e) { radiusCircle.setRadius(e.target.value); });
+
+    let resultMarkers = L.layerGroup().addTo(map);
+
+    // Fungsi untuk membuka/menutup panel (Bisa dipanggil manual via tombol)
+    function togglePanel(bodyId, btnId) {
+        let body = document.getElementById(bodyId);
+        let btn = document.getElementById(btnId);
+        
+        if (body.style.display === 'none') {
+            body.style.display = 'block';
+            btn.innerHTML = '&#9660;'; // Ikon ▼
+        } else {
+            body.style.display = 'none';
+            btn.innerHTML = '&#9650;'; // Ikon ▲
+        }
+    }
+
+    async function getWikiPhoto(wikiTag) {
+        if (!wikiTag) return null;
+        let parts = wikiTag.split(':');
+        if (parts.length !== 2) return null;
+        
+        let lang = parts[0];
+        let title = parts[1];
+        let url = `https://${lang}.wikipedia.org/w/api.php?action=query&prop=pageimages&titles=${encodeURIComponent(title)}&pithumbsize=400&format=json&origin=*`;
+        
+        try {
+            let response = await fetch(url);
+            let data = await response.json();
+            let pages = data.query.pages;
+            let pageId = Object.keys(pages)[0];
+            if (pages[pageId].thumbnail) {
+                return pages[pageId].thumbnail.source;
+            }
+        } catch (error) {
+            console.warn("Gagal mengambil gambar dari Wikipedia:", error);
+        }
+        return null;
+    }
+
+    function acakPilihan() {
+        const minR = 1000, maxR = 15000;
+        const randomRadius = Math.floor((Math.random() * (maxR - minR) + minR) / 500) * 500;
+        document.getElementById('radius').value = randomRadius;
+        radiusCircle.setRadius(randomRadius);
+
+        const typeSelect = document.getElementById('dest-type');
+        typeSelect.selectedIndex = Math.floor(Math.random() * typeSelect.options.length);
+
+        if (!document.getElementById('lock-start').checked) {
+            const daftarJangkar = [
+                { lat: -6.9175, lng: 107.6191 }, { lat: -7.7003, lng: 108.4956 },
+                { lat: -6.9822, lng: 106.5506 }, { lat: -6.0400, lng: 105.8900 },
+                { lat: -7.2289, lng: 107.9058 }, { lat: -7.7956, lng: 110.3695 },
+                { lat: -8.4554, lng: 115.0716 }, { lat: -8.6180, lng: 116.5100 },
+                { lat: -0.9471, lng: 100.4172 }, { lat: -1.2654, lng: 116.8312 },
+                { lat: -5.1477, lng: 119.4327 }, { lat: -2.5337, lng: 140.7181 },
+                { lat: -7.9666, lng: 112.6326 }, { lat: -6.1754, lng: 106.8272 }
+            ];
+            
+            const jangkar = daftarJangkar[Math.floor(Math.random() * daftarJangkar.length)];
+            const newLatLng = new L.LatLng(jangkar.lat + (Math.random() - 0.5) * 0.15, jangkar.lng + (Math.random() - 0.5) * 0.15);
+            startMarker.setLatLng(newLatLng);
+            radiusCircle.setLatLng(newLatLng);
+            map.setView(newLatLng, 12);
+        }
+        cariTujuan();
+    }
+
+    async function cariTujuan() {
+        let btnSearch = document.querySelector('.btn-search');
+        let btnRandom = document.querySelector('.btn-random');
+        
+        btnSearch.innerText = "Mencari...";
+        btnSearch.disabled = true; btnRandom.disabled = true;
+        
+        // 1. Munculkan Container Hasil Pencarian
+        document.getElementById('results-container').style.display = 'flex';
+        
+        // 2. Pastikan area Hasil (di dalamnya) dalam kondisi terbuka (tidak tersembunyi)
+        document.getElementById('results-area').style.display = 'block';
+        document.getElementById('btn-toggle-results').innerHTML = '&#9660;';
+        
+        // 3. (Opsional/Mobile UX) Jika di layar HP, otomatis tutup panel pencarian agar tidak menghalangi peta
+        if (window.innerWidth <= 768) {
+            document.getElementById('search-body').style.display = 'none';
+            document.getElementById('btn-toggle-search').innerHTML = '&#9650;';
+        }
+        
+        document.getElementById('results-area').innerHTML = '<div class="result-card"><p style="color:#666; margin:0;">Sedang memproses peta dan data gambar...</p></div>';
+        resultMarkers.clearLayers();
+
+        let lat = startMarker.getLatLng().lat;
+        let lng = startMarker.getLatLng().lng;
+        let radius = document.getElementById('radius').value;
+        let type = document.getElementById('dest-type').value;
+
+        let nodeQuery = "";
+        if (type === 'park') nodeQuery = `node["leisure"="park"](around:${radius},${lat},${lng});`;
+        else if (type === 'water') nodeQuery = `node["natural"~"water|beach"](around:${radius},${lat},${lng});`;
+        else if (type === 'forest') nodeQuery = `node["natural"="wood"](around:${radius},${lat},${lng}); node["landuse"="forest"](around:${radius},${lat},${lng});`;
+        else if (type === 'building') nodeQuery = `node["tourism"="museum"](around:${radius},${lat},${lng}); node["shop"="mall"](around:${radius},${lat},${lng});`;
+        else if (type === 'any') nodeQuery = `
+            node["leisure"="park"](around:${radius},${lat},${lng});
+            node["natural"~"water|beach"](around:${radius},${lat},${lng});
+            node["natural"="wood"](around:${radius},${lat},${lng});
+            node["landuse"="forest"](around:${radius},${lat},${lng});
+            node["tourism"="museum"](around:${radius},${lat},${lng});
+            node["shop"="mall"](around:${radius},${lat},${lng});`;
+
+        let url = `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(`[out:json];(${nodeQuery});out 15;`)}`;
+
+        try {
+            let response = await fetch(url);
+            let data = await response.json();
+            tampilkanHasil(data.elements, type);
+        } catch (error) {
+            document.getElementById('results-area').innerHTML = '<div class="result-card"><p style="color:red; margin:0;">Gagal memuat data pencarian. Silakan coba lagi.</p></div>';
+        }
+
+        btnSearch.innerText = "Cari Tujuan";
+        btnSearch.disabled = false; btnRandom.disabled = false;
+    }
+
+    function tampilkanHasil(elements, type) {
+        let resultsArea = document.getElementById('results-area');
+        if (elements.length === 0) {
+            resultsArea.innerHTML = '<div class="result-card"><p style="margin:0;">Tidak ditemukan entitas objek. Klik "Acak Pilihan" atau perbesar radius pencarian.</p></div>';
+            return;
+        }
+        resultsArea.innerHTML = '';
+
+        let startLat = startMarker.getLatLng().lat;
+        let startLng = startMarker.getLatLng().lng;
+
+        elements.forEach((el, index) => {
+            let name = el.tags && el.tags.name ? el.tags.name : `Destinasi Terbuka #${index + 1}`;
+            L.marker([el.lat, el.lon]).addTo(resultMarkers).bindPopup(`<b>${name}</b>`);
+
+            let rekomendasiKegiatan = "", rekomendasiCommuting = "";
+            let radiusInput = parseInt(document.getElementById('radius').value);
+
+            let targetType = type;
+            if (type === 'any' && el.tags) {
+                if (el.tags.leisure === 'park') targetType = 'park';
+                else if (el.tags.natural === 'water' || el.tags.natural === 'beach') targetType = 'water';
+                else if (el.tags.natural === 'wood' || el.tags.landuse === 'forest') targetType = 'forest';
+                else if (el.tags.tourism === 'museum' || el.tags.shop === 'mall') targetType = 'building';
+            }
+
+            if (targetType === 'park' || targetType === 'forest') rekomendasiKegiatan = "Sangat ideal untuk aktivitas fisik, gowes sepeda, jalan kaki santai, atau fotografi landscape.";
+            else if (targetType === 'water') rekomendasiKegiatan = "Menikmati udara sejuk tepi air, beristirahat menenangkan pikiran, atau berburu foto pemandangan.";
+            else if (targetType === 'building') rekomendasiKegiatan = "Eksplorasi tata ruang arsitektur, menikmati kuliner lokal, atau mempelajari sejarah gedung.";
+            else rekomendasiKegiatan = "Eksplorasi area sekitar tempat baru atau bersantai rileks.";
+
+            if (radiusInput <= 2000) rekomendasiCommuting = "Sangat dekat dari titik awal. Disarankan berjalan kaki atau sepeda kayuh.";
+            else if (radiusInput <= 8000) rekomendasiCommuting = "Jarak sedang. Gunakan motor atau bersepeda (gowes jarak menengah) demi efisiensi waktu.";
+            else rekomendasiCommuting = "Jarak cukup jauh. Pertimbangkan berpindah moda secara estafet (ngeteng) angkutan umum atau kendaraan bermotor.";
+
+            let gmapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${startLat},${startLng}&destination=${el.lat},${el.lon}`;
+
+            let imgContainerId = `img-container-${el.id}`;
+            let card = document.createElement('div');
+            card.className = 'result-card';
+            
+            card.innerHTML = `
+                <div id="${imgContainerId}" class="result-img-container"></div>
+                <a href="${gmapsUrl}" target="_blank" class="result-title" title="Buka Rute di Google Maps">
+                    <span>${name}</span>
+                    <span class="result-title-icon">↗</span>
+                </a>
+                <div class="result-desc"><strong>Radius Pencarian:</strong> ${radiusInput}m</div>
+                <div class="result-desc"><strong>Kegiatan:</strong> ${rekomendasiKegiatan}</div>
+                <div class="result-desc"><strong>Transportasi:</strong> ${rekomendasiCommuting}</div>
+            `;
+            resultsArea.appendChild(card);
+
+            if (el.tags.image && el.tags.image.startsWith('http')) {
+                document.getElementById(imgContainerId).innerHTML = `<img src="${el.tags.image}" class="result-img" alt="${name}">`;
+            } else if (el.tags.wikipedia) {
+                getWikiPhoto(el.tags.wikipedia).then(photoUrl => {
+                    if (photoUrl) {
+                        let imgDiv = document.getElementById(imgContainerId);
+                        if (imgDiv) imgDiv.innerHTML = `<img src="${photoUrl}" class="result-img" alt="${name}">`;
+                    }
+                });
+            }
+        });
+
+        let bounds = L.featureGroup([startMarker, ...resultMarkers.getLayers()]).getBounds();
+        map.fitBounds(bounds, {padding: [40, 40]});
+    }
+</script>
+
+</body>
+</html>
